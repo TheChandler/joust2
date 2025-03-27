@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "jsgame": "github:TheChandler/JSGame",
+    "typescript": "^5.8.2"
+  }
+}
