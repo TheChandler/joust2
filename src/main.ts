@@ -10,21 +10,24 @@ canvas.height = 1300;
 canvas.width = canvas.height * (canvas.clientWidth / canvas.clientHeight);
 // console.log("Canvas Size:")
 // console.log(canvas.width, canvas.height)
-export const c = <CanvasRenderingContext2D>canvas.getContext("2d")
-export const ctx = CameraConstructor.MakeGameCamera(c, canvas, 0, 0);
-export const staticCtx = ctx.baseObj;
-export const shapeFactory = new ShapeFactory(ctx)
-export const staticShapeFactory = new ShapeFactory(staticCtx)
+const c = <CanvasRenderingContext2D>canvas.getContext("2d")
+const ctx = CameraConstructor.MakeGameCamera(c, canvas, 0, 0);
+const staticCtx = ctx.baseObj;
+const shapeFactory = new ShapeFactory(ctx)
+const staticShapeFactory = new ShapeFactory(staticCtx)
 interface StateContainer {
     state?: State
+    setState: (stateClass: any) => void
 }
 console.log("Main state", MainState)
 let stateContainer: StateContainer = {
-    state: null
+    state: null,
+    setState: function (stateClass){
+        this.state = new stateClass({c, ctx, staticCtx,shapeFactory, staticShapeFactory})
+    }
 }
 setTimeout(()=>{
-    stateContainer.state = new MainState()
-    console.log("stateContainer.state", stateContainer.state)
+    console.log("stateContainer.state", stateContainer.setState(MainState))
 }, 1000)
 canvas.addEventListener('click', (event) => stateContainer.state.click(event))
 canvas.addEventListener("mousemove", (event) => stateContainer.state.mousemove(event))
