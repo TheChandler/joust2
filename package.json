@@ -2,5 +2,11 @@
   "dependencies": {
     "jsgame": "github:TheChandler/JSGame",
     "typescript": "^5.8.2"
+  },
+  "scripts": {
+    "build": "tsc --outDir build"
+  },
+  "devDependencies": {
+    "vite": "^6.2.5"
   }
 }
