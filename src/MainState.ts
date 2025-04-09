@@ -1,14 +1,16 @@
 import { State } from "jsgame";
-import { shapeFactory, switchState } from "./main";
+import { shapeFactory, switchState } from "./gameMain";
 
 
 export default class MainState implements State {
 
     circle: any;
+    menu: HTMLElement | null;
     constructor(dependencies: any){
         console.log("dep", dependencies)
 
         this.circle = dependencies.shapeFactory.createCircle(0,0,100,"red");
+        this.menu = document.getElementById("mainMenu")
         
     }
     name =  "MainState";

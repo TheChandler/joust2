@@ -1,12 +1,21 @@
 {
+  "name": "my-electron-app",
+  "version": "1.0.0",
+  "description": "Hello World!",
+  "main": "./src/main.js",
+  "author": "Jane Doe",
+  "license": "MIT",
+
   "dependencies": {
     "jsgame": "github:TheChandler/JSGame",
     "typescript": "^5.8.2"
   },
   "scripts": {
-    "build": "tsc --outDir build"
+    "build": "tsc --outDir build",
+    "start": "vite"
   },
   "devDependencies": {
+    "electron": "^35.1.4",
     "vite": "^6.2.5"
   }
 }
