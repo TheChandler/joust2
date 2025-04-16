@@ -2,10 +2,12 @@ import { CameraConstructor } from "jsgame";
 import { State } from "jsgame";
 import { ShapeFactory } from "jsgame";
 import  MainState  from "./MainState";
+import { createEntityList } from "./EntityList.js";
 
 export const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canv");
 // canvas.height = canvas.clientHeight;
 // canvas.width = canvas.clientWidth;
+console.log("look at this shit")
 canvas.height = 1300;
 canvas.width = canvas.height * (canvas.clientWidth / canvas.clientHeight);
 // console.log("Canvas Size:")
@@ -32,6 +34,10 @@ setTimeout(()=>{
 canvas.addEventListener('click', (event) => stateContainer.state.click(event))
 canvas.addEventListener("mousemove", (event) => stateContainer.state.mousemove(event))
 canvas.addEventListener('contextmenu', (event) => stateContainer.state.contextmenu(event))
+
+
+document.body.append(createEntityList())
+
 
 export const FRAMERATE =  60; 
 

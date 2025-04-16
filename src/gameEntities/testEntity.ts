@@ -1,25 +1,22 @@
-import { BaseEntity } from "./baseEntity";
+import { BaseEntity, EntityOption, EntityOptionType } from "./baseEntity";
+import { Vector2 } from 'jsgame'
 
 
+export class TestEntity extends BaseEntity {
 
-class TestEntity extends BaseEntity{
-    
+    public static options = [
+        new EntityOption("name", EntityOptionType.String),
+        new EntityOption("position", EntityOptionType.Vector)
+    ]
+
     name: string;
-    number: number;
-    test: string;
-    
-    constructor({name,number,test}){
-       super(); 
+    position: Vector2;
+
+    constructor({ name, position }) {
+        super();
         this.name = name;
-        this.number = number;
-        this.test = test;
+        this.position = position;
+
     }
-    
-    getDetails(){
-        return {
-            "name":"string",
-            "number":"number",
-            "test":"test"
-        }
-    }
+
 }

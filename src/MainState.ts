@@ -1,6 +1,4 @@
 import { State } from "jsgame";
-import { shapeFactory, switchState } from "./gameMain";
-
 
 export default class MainState implements State {
 

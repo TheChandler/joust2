@@ -2,15 +2,30 @@
 
 
 
+
+
 export abstract class BaseEntity {
 
 
+    public static options: EntityOption[]
 
-    getDetails(){
-        return {
-            "name":"string",
-            "number":"number",
-        }
+    public static getOptions(){
+        return this.options
     }
 
 } 
+
+export enum EntityOptionType{
+    String,
+    Number,
+    Vector
+}
+
+export class EntityOption{
+    name: string;
+    type: EntityOptionType;
+    constructor(name: string, type: EntityOptionType){
+        this.name = name;
+        this.type = type;
+    }
+}
