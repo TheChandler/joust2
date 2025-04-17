@@ -1,42 +1,31 @@
 import { CameraConstructor } from "jsgame";
-import { State } from "jsgame";
 import { ShapeFactory } from "jsgame";
-import  MainState  from "./MainState";
 import { createEntityList } from "./EntityList.js";
+import { StateManager } from "./StateManager.js";
 
 export const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canv");
 // canvas.height = canvas.clientHeight;
 // canvas.width = canvas.clientWidth;
-console.log("look at this shit")
-canvas.height = 1300;
-canvas.width = canvas.height * (canvas.clientWidth / canvas.clientHeight);
-// console.log("Canvas Size:")
-// console.log(canvas.width, canvas.height)
+
+canvas.height = 400;
+canvas.width = 600;
+
 const c = <CanvasRenderingContext2D>canvas.getContext("2d")
 const ctx = CameraConstructor.MakeGameCamera(c, canvas, 0, 0);
 const staticCtx = ctx.baseObj;
 const shapeFactory = new ShapeFactory(ctx)
 const staticShapeFactory = new ShapeFactory(staticCtx)
-interface StateContainer {
-    state?: State
-    setState: (stateClass: any) => void
-}
-console.log("Main state", MainState)
-let stateContainer: StateContainer = {
-    state: null,
-    setState: function (stateClass){
-        this.state = new stateClass({c, ctx, staticCtx,shapeFactory, staticShapeFactory})
-    }
-}
-setTimeout(()=>{
-    console.log("stateContainer.state", stateContainer.setState(MainState))
-}, 1000)
+
+let stateContainer = new StateManager({c, ctx, staticCtx,shapeFactory, staticShapeFactory});
+
+
+
 canvas.addEventListener('click', (event) => stateContainer.state.click(event))
 canvas.addEventListener("mousemove", (event) => stateContainer.state.mousemove(event))
 canvas.addEventListener('contextmenu', (event) => stateContainer.state.contextmenu(event))
 
 
-document.body.append(createEntityList())
+document.getElementById('mainMenu').append(createEntityList())
 
 
 export const FRAMERATE =  60; 

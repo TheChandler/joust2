@@ -2,7 +2,7 @@
   "name": "my-electron-app",
   "version": "1.0.0",
   "description": "Hello World!",
-  "main": "./src/main.js",
+  "main": "./src/webpage-assets/electronLaunch.js",
   "author": "Jane Doe",
   "license": "MIT",
 

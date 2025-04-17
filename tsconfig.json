@@ -5,5 +5,5 @@
         "lib": ["es2022", "dom", "dom.iterable"],
         "moduleResolution": "node",
     },
-    "include": ["./src/*"],
+    "include": ["./src/*", "src/code/gameEntities", "src/code/EntityList.ts", "src/code/gameMain.ts", "src/code/IStateContainer.ts", "src/code/MainState.ts", "src/code/StateManager.ts", "src/webpage-assets/electronLaunch.js"],
 }
