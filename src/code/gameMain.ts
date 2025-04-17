@@ -1,4 +1,4 @@
-import { CameraConstructor } from "jsgame";
+import { CameraConstructor, State } from "jsgame";
 import { ShapeFactory } from "jsgame";
 import { createEntityList } from "./EntityList.js";
 import { StateManager } from "./StateManager.js";
