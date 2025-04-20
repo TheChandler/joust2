@@ -4,7 +4,7 @@
 
 
 
-export abstract class BaseEntity {
+export abstract class Entity {
 
 
     public static options: EntityOption[]
@@ -12,6 +12,8 @@ export abstract class BaseEntity {
     public static getOptions(){
         return this.options
     }
+
+    public abstract update()
 
 } 
 

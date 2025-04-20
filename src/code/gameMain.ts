@@ -2,6 +2,7 @@ import { CameraConstructor, State } from "jsgame";
 import { ShapeFactory } from "jsgame";
 import { createEntityList } from "./EntityList.js";
 import { StateManager } from "./StateManager.js";
+import MainState from "./States/MainState.js";
 
 export const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canv");
 // canvas.height = canvas.clientHeight;
@@ -10,15 +11,14 @@ export const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementB
 canvas.height = 400;
 canvas.width = 600;
 
-const c = <CanvasRenderingContext2D>canvas.getContext("2d")
-const ctx = CameraConstructor.MakeGameCamera(c, canvas, 0, 0);
-const staticCtx = ctx.baseObj;
-const shapeFactory = new ShapeFactory(ctx)
-const staticShapeFactory = new ShapeFactory(staticCtx)
+export const c = <CanvasRenderingContext2D>canvas.getContext("2d")
+export const ctx = CameraConstructor.MakeGameCamera(c, canvas, 0, 0);
+export const staticCtx = ctx.baseObj;
+export const shapeFactory = new ShapeFactory(ctx)
+export const staticShapeFactory = new ShapeFactory(staticCtx)
 
 let stateContainer = new StateManager({c, ctx, staticCtx,shapeFactory, staticShapeFactory});
-
-
+stateContainer.setState(MainState)
 
 canvas.addEventListener('click', (event) => stateContainer.state.click(event))
 canvas.addEventListener("mousemove", (event) => stateContainer.state.mousemove(event))
