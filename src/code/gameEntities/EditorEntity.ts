@@ -1,9 +1,12 @@
 import { IShape, Shape } from "jsgame/build/IShape.js";
 import { ctx, shapeFactory } from "../gameMain.js";
 import { Entity, EntityOption, EntityOptionType } from "./Entity.js";
-import { Circle, Vector2 } from 'jsgame'
+import { Circle, Sprite, Vector2, CreateImage } from 'jsgame'
 import { EntityWIthPosition } from "./EntityWithPosition.js";
 
+
+//Todo: Fix createimage naming capitalization and filename
+let spritePlaceholder = CreateImage('./assets/images/testpng.png')
 
 export class EditorEntity extends EntityWIthPosition {
 
@@ -14,27 +17,41 @@ export class EditorEntity extends EntityWIthPosition {
     ]
 
     name: string;
-    shape: Circle;
+    shape: Sprite;
     size: Vector2;
     constructor({ name, position, size }) {
         super();
         this.name = name;
         this.position = position;
-        this.shape = shapeFactory.createCircle(position.x, position.y, 10)
-        this.shape.position = this.position
+        this.size = size;
+        this.shape = shapeFactory.createSprite(spritePlaceholder, position.x, position.y, size.x, size.y)
     }
     public update(){
         this.shape.draw('#f00');
     }
+    
+
     public draw(){
-        this.shape.draw('#f00');
+        // TODO: update sprite class to use vector2 as position and size. This will allow sharing of values more directly
+
+
+        this.shape.x = this.position.x;
+        this.shape.y = this.position.y;
+        this.shape.width = this.size.x;
+        this.shape.height = this.size.y;
+
+        this.shape.draw();
         console.log('rerender')
     }
     public click(event){
-        
         let [x,y] = ctx.convertScreenCordsToWorldCords(event.clientX, event.clientY)
-        this.position.x = x
-        this.position.y = y
+        if ( this.shape.collides(new Vector2(null, x, y))){
+            Math.random() > .5 ?
+                this.position.x += 10 :
+                this.position.x -= 10 ;
+        }
+
+
     }
     
 }

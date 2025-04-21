@@ -11,8 +11,9 @@ export const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementB
 canvas.height = 400;
 canvas.width = 600;
 
-export const c = <CanvasRenderingContext2D>canvas.getContext("2d")
+export const c = <CanvasRenderingContext2D>canvas.getContext("2d", {alpha: false})
 export const ctx = CameraConstructor.MakeGameCamera(c, canvas, 0, 0);
+ctx.imageSmoothingEnabled = false;
 export const staticCtx = ctx.baseObj;
 export const shapeFactory = new ShapeFactory(ctx)
 export const staticShapeFactory = new ShapeFactory(staticCtx)
@@ -40,7 +41,7 @@ function update() {
             nextTickTime += tickLength
         }
         
-        ctx.fillStyle = "#fff"
+        ctx.fillStyle = "#ddd"
         ctx.fillRect(ctx.position.x - (ctx.size.x / 2), ctx.position.y - (ctx.size.y / 2), canvas.width, canvas.height)
         if (stateContainer.state) {
             stateContainer.state.update();

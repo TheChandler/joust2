@@ -7,15 +7,15 @@ export default class MainState implements State {
     circle: any;
     menu: HTMLElement | null;
 
-
     editorEntities: EditorEntity[] = []
+
     constructor(dependencies: any){
         console.log("dep", dependencies)
 
         this.editorEntities.push( new EditorEntity({
             name: 'test',
             position: new Vector2(null,0,0),
-            size: new Vector2(null, 10,10)
+            size: new Vector2(null, 100,100)
         }) );
         this.menu = document.getElementById("mainMenu")
         
