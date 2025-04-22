@@ -1,4 +1,4 @@
-import { CameraConstructor, State } from "jsgame";
+import { CameraConstructor, Input, State } from "jsgame";
 import { ShapeFactory } from "jsgame";
 import { createEntityList } from "./EntityList.js";
 import { StateManager } from "./StateManager.js";
@@ -28,7 +28,7 @@ canvas.addEventListener('contextmenu', (event) => stateContainer.state.contextme
 
 document.getElementById('mainMenu').append(createEntityList())
 
-
+export const input = new Input();
 export const FRAMERATE =  60; 
 
 let tickLength = 1000 / FRAMERATE;
