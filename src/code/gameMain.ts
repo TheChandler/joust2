@@ -8,8 +8,8 @@ export const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementB
 // canvas.height = canvas.clientHeight;
 // canvas.width = canvas.clientWidth;
 
-canvas.height = 400;
-canvas.width = 600;
+canvas.height = 640;
+canvas.width = 1137;
 
 export const c = <CanvasRenderingContext2D>canvas.getContext("2d", {alpha: false})
 export const ctx = CameraConstructor.MakeGameCamera(c, canvas, 0, 0);
@@ -25,8 +25,6 @@ canvas.addEventListener('click', (event) => stateContainer.state.click(event))
 canvas.addEventListener("mousemove", (event) => stateContainer.state.mousemove(event))
 canvas.addEventListener('contextmenu', (event) => stateContainer.state.contextmenu(event))
 
-
-document.getElementById('mainMenu').append(createEntityList())
 
 export const input = new Input();
 export const FRAMERATE =  60; 

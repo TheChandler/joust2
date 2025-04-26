@@ -21,9 +21,13 @@ export class EditorEntity extends EntityWIthPosition {
     shape: Sprite;
     size: Vector2;
     isActive: boolean = false;
-    constructor({ name, position, size }) {
+    id: string;
+    type: string;
+    constructor({ name, position, size, id, type }) {
         super();
         this.name = name;
+        this.id = id;
+        this.type = type;
         this.position = position;
         this.size = size;
         this.shape = shapeFactory.createSprite(spritePlaceholder, position.x, position.y, size.x, size.y)
@@ -45,7 +49,7 @@ export class EditorEntity extends EntityWIthPosition {
 
         this.shape.draw();
     }
-    public click(vec) {
+    public isAtLocation(vec) {
         let {x, y } = vec
         if (this.shape.collides(new Vector2(null, x, y))) {
             console.log('returning true')
@@ -87,12 +91,10 @@ export class EditorEntity extends EntityWIthPosition {
         if (this.selected == null) {
             this.selected = 'e'
         }
-        console.log("Selected", this.selected)
     }
 
     // A thing was moved. 
     public move(vec: Vector2) {
-        console.log("moving", this.selected)
         switch (this.selected) {
             case "bl":
                 this.position.add(vec)

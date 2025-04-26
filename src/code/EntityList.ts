@@ -1,26 +1,28 @@
 
 import { EditorEntity } from './gameEntities/EditorEntity.js'
+import { Platform } from './gameEntities/Platform.js'
 
-export function createEntityList() {
+export function createEntityList(create) {
 
     let entities = [
-        EditorEntity
+        Platform
     ]
 
     let optionsList = []
 
 
-    console.log("test entity", EditorEntity.getOptions())
-    
+
     let div = document.createElement("div")
-    for (let entity of entities){
+    div.classList.add('p-3', 'bg-body-secondary')
+    for (let entity of entities) {
         let child = document.createElement('div')
         child.innerText = entity.name
+        child.onclick = () => create(entity)
         div.appendChild(child);
     }
-  
+
     // for (let entity of entities){
-        
+
     //     let options = entity.getOptions();
     //     for (let option of options){
     //         optionsList.push(option)
