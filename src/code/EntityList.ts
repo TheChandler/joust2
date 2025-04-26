@@ -2,19 +2,16 @@
 import { EditorEntity } from './gameEntities/EditorEntity.js'
 import { Platform } from './gameEntities/Platform.js'
 
+
+export const entityList = [
+    Platform
+]
+
 export function createEntityList(create) {
-
-    let entities = [
-        Platform
-    ]
-
-    let optionsList = []
-
-
 
     let div = document.createElement("div")
     div.classList.add('p-3', 'bg-body-secondary')
-    for (let entity of entities) {
+    for (let entity of entityList) {
         let child = document.createElement('div')
         child.innerText = entity.name
         child.onclick = () => create(entity)

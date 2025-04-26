@@ -2,7 +2,7 @@ import { State, Vector2 } from "jsgame";
 import { Entity } from "../gameEntities/Entity.js";
 import { EditorEntity } from "../gameEntities/EditorEntity.js";
 import { ctx, input } from "../gameMain.js";
-import { createEntityList } from "../EntityList.js";
+import { createEntityList, entityList } from "../EntityList.js";
 import { makeMenu } from "../MakeMenu"
 
 export default class MainState implements State {
@@ -10,7 +10,7 @@ export default class MainState implements State {
     circle: any;
     menu: HTMLElement | null;
 
-    editorEntities: EditorEntity[] = []
+    editorEntities: Entity[] = []
     selectedEntity: EditorEntity;
 
     constructor(dependencies: any) {
@@ -25,6 +25,8 @@ export default class MainState implements State {
         document.addEventListener('pointerdown', this.pointerDown.bind(this))
 
         makeMenu(this)
+        
+
     }
 
 
@@ -33,13 +35,29 @@ export default class MainState implements State {
         let levelData = localStorage.getItem('level')
         let entities = JSON.parse(levelData)
         for (let entity of entities) {
+            let classType = entityList.find(c => c.name == entity.type)
+            
             this.editorEntities.push(new EditorEntity({
                 name: entity.name,
                 id: entity.id,
                 type: entity.type,
+                image: classType.image,
                 position: new Vector2(null, entity.position[0], entity.position[1]),
                 size: new Vector2(null, entity.size[0], entity.size[1])
             }))
+
+            // console.log(classType)
+
+            // if (classType){
+
+            //     this.editorEntities.push(new classType({
+            //         image:null,
+            //         position: new Vector2(null, entity.position[0], entity.position[1]),
+            //         size: new Vector2(null, entity.size[0], entity.size[1])
+            //     }))
+            // } else{
+            //     console.log("not found", entity.type, entityList)
+            // }
         }
     }
     getLevelData() {
@@ -48,7 +66,10 @@ export default class MainState implements State {
             levelData.push({
                 name: entity.name,
                 position: [entity.position.x, entity.position.y],
-                size: [entity.size.x, entity.size.y]
+                size: [entity.size.x, entity.size.y],
+                id: entity.id,
+                type: entity.type,
+
             })
         }
         return levelData

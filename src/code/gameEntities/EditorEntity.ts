@@ -23,14 +23,15 @@ export class EditorEntity extends EntityWIthPosition {
     isActive: boolean = false;
     id: string;
     type: string;
-    constructor({ name, position, size, id, type }) {
+    constructor({ name, position, size, id, type, image }) {
         super();
         this.name = name;
         this.id = id;
         this.type = type;
         this.position = position;
         this.size = size;
-        this.shape = shapeFactory.createSprite(spritePlaceholder, position.x, position.y, size.x, size.y)
+        
+        this.shape = shapeFactory.createSprite(image ?? spritePlaceholder, position.x, position.y, size.x, size.y)
     }
     public update() {
         this.shape.draw('#f00');

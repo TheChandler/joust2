@@ -6,18 +6,21 @@ import { shapeFactory } from "../gameMain.js";
 
 export class Platform extends EntityWIthPosition{
 
-    image: HTMLImageElement;
+    
     size: Vector2;
 
     sprite: Sprite;
+
+    static image = CreateImage('./assets/images/testPlatform.png')
     public constructor({image, position, size}){
         super()
 
-        this.image= CreateImage('./assets/images/testPlatform.png');
+        let spriteImage = CreateImage('./assets/images/testPlatform.png')
+    
         this.position=position;
         this.size=size;
 
-        this.sprite = shapeFactory.createSprite(image, position.x, position.y, size.x, size.y)
+        this.sprite = shapeFactory.createSprite(spriteImage, position.x, position.y, size.x, size.y)
     }
 
     public update() {
