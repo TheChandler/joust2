@@ -62,8 +62,13 @@ export class EditorEntity extends EntityWIthPosition {
 
     }
     public isAtLocation(vec) {
+        shapeFactory.createSprite(spritePlaceholder, this.shape.x, this.shape.y, this.shape.width, this.shape.height).draw()
         let { x, y } = vec
-        if (this.shape.collides(new Circle(null, x, y, 15))) {
+        //Using circle is currently causing this not to work
+        let c = shapeFactory.createCircle(x,y, 15)
+        c.draw('#F00')
+        
+        if (this.shape.collides(c)) {
             console.log('returning true')
             return true
         }
@@ -130,7 +135,6 @@ export class EditorEntity extends EntityWIthPosition {
                 this.position.add(vec)
                 break;
         }
-
     }
 
 }

@@ -27,7 +27,7 @@ export default class EditorState implements State {
         let entities = JSON.parse(levelData)
         for (let entity of entities) {
             let classType = entityList.find(c => c.name == entity.type)
-            
+
             this.editorEntities.push(new EditorEntity({
                 name: entity.name,
                 id: entity.id,
@@ -73,7 +73,7 @@ export default class EditorState implements State {
         console.log("entityType", entityType)
         this.editorEntities.push(new EditorEntity({
             name: entityType.name,
-            id: Math.floor(Math.random()*0xFFFFFFFF).toString(16),
+            id: Math.floor(Math.random() * 0xFFFFFFFF).toString(16),
             type: entityType.name,
             image: entityType.image,
             position: new Vector2(null, 0, 0),
@@ -89,7 +89,7 @@ export default class EditorState implements State {
 
     }
 
-    getEntityAt(vec){
+    getEntityAt(vec) {
         return this.editorEntities.find((e) => e.isAtLocation(vec))
     }
 
@@ -97,30 +97,31 @@ export default class EditorState implements State {
         console.log(this.editorEntities)
         let [x, y] = ctx.convertScreenCordsToWorldCords(event.clientX, event.clientY)
         let vec = new Vector2(null, x, y)
-        let selectedEntity = this.getEntityAt(vec)
-        if (selectedEntity) {
-            console.log("selectedEntity", selectedEntity.id)
+        if (!this.selectedEntity || !this.selectedEntity.isAtLocation(vec)) {
             if (this.selectedEntity){
                 this.selectedEntity.isActive = false;
             }
-            this.selectedEntity = selectedEntity;
+            this.selectedEntity = this.getEntityAt(vec)
+        }
+        if (this.selectedEntity) {
             this.selectedEntity.isActive = true;
-            selectedEntity.selectForMovement(vec)
-            this.updateDetails(selectedEntity)
+            console.log("selectedEntity", this.selectedEntity.id)
+            this.selectedEntity.selectForMovement(vec)
+            this.updateDetails(this.selectedEntity)
         }
 
     }
 
-    updateDetails(entity){
+    updateDetails(entity) {
         let div = document.getElementById('details')
         div.innerHTML = ''
 
-        for (let entry of Object.entries(entity)){
+        for (let entry of Object.entries(entity)) {
             let el = document.createElement('div')
             el.innerText = entry.toString()
             div.append(el);
         }
-        
+
     }
 
     mousemove(event: MouseEvent) {
@@ -134,7 +135,7 @@ export default class EditorState implements State {
         let [x, y] = ctx.convertScreenCordsToWorldCords(event.clientX, event.clientY)
         let vec = new Vector2(null, x, y)
         let selectedEntity = this.getEntityAt(vec);
-        this.editorEntities = this.editorEntities.filter(e=> e.id != selectedEntity.id)
+        this.editorEntities = this.editorEntities.filter(e => e.id != selectedEntity.id)
     }
     update() {
         this.render();
