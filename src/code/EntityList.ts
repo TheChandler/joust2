@@ -1,10 +1,12 @@
 
+import { Ball } from './gameEntities/Ball.js'
 import { EditorEntity } from './gameEntities/EditorEntity.js'
 import { Platform } from './gameEntities/Platform.js'
 
 
 export const entityList = [
-    Platform
+    Platform,
+    Ball
 ]
 
 export function createEntityList(create) {

@@ -2,7 +2,7 @@ import { CameraConstructor, Input, State } from "jsgame";
 import { ShapeFactory } from "jsgame";
 import { createEntityList } from "./EntityList.js";
 import { StateManager } from "./StateManager.js";
-import MainState from "./States/MainState.js";
+import EditorState from "./States/EditorState.js";
 
 export const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canv");
 // canvas.height = canvas.clientHeight;
@@ -19,7 +19,7 @@ export const shapeFactory = new ShapeFactory(ctx)
 export const staticShapeFactory = new ShapeFactory(staticCtx)
 
 let stateContainer = new StateManager({c, ctx, staticCtx,shapeFactory, staticShapeFactory});
-stateContainer.setState(MainState)
+stateContainer.setState(EditorState)
 
 canvas.addEventListener('click', (event) => stateContainer.state.click(event))
 canvas.addEventListener("mousemove", (event) => stateContainer.state.mousemove(event))

@@ -1,7 +1,7 @@
 import { IShape, Shape } from "jsgame/build/IShape.js";
 import { ctx, shapeFactory } from "../gameMain.js";
 import { Entity, EntityOption, EntityOptionType } from "./Entity.js";
-import { Circle, Sprite, Vector2, CreateImage } from 'jsgame'
+import { Circle, Sprite, Vector2, CreateImage, ShapeFactory } from 'jsgame'
 import { EntityWIthPosition } from "./EntityWithPosition.js";
 import { version } from "typescript";
 
@@ -17,10 +17,15 @@ export class EditorEntity extends EntityWIthPosition {
         new EntityOption("size", EntityOptionType.Vector)
     ]
 
+    /** Name that shows up in editor */
     name: string;
+    /** IShape representing object */
     shape: Sprite;
+    /** Width and height of object */
     size: Vector2;
+    /** The entity is selected in the editor*/ 
     isActive: boolean = false;
+    /**unique identifier */
     id: string;
     type: string;
     constructor({ name, position, size, id, type, image }) {
@@ -30,7 +35,7 @@ export class EditorEntity extends EntityWIthPosition {
         this.type = type;
         this.position = position;
         this.size = size;
-        
+
         this.shape = shapeFactory.createSprite(image ?? spritePlaceholder, position.x, position.y, size.x, size.y)
     }
     public update() {
@@ -42,30 +47,35 @@ export class EditorEntity extends EntityWIthPosition {
     public draw() {
         // TODO: update sprite class to use vector2 as position and size. This will allow sharing of values more directly
 
-
         this.shape.x = this.position.x;
         this.shape.y = this.position.y;
         this.shape.width = this.size.x;
         this.shape.height = this.size.y;
-
         this.shape.draw();
+
+        if (this.isActive) {
+            shapeFactory.createVector2(this.position.x, this.position.y).draw('#f00')
+            shapeFactory.createVector2(this.position.x, this.position.y + this.size.y).draw('#f00')
+            shapeFactory.createVector2(this.position.x + this.size.x, this.position.y).draw('#f00')
+            shapeFactory.createVector2(this.position.x + this.size.x, this.position.y + this.size.y).draw('#f00')
+        }
+
     }
     public isAtLocation(vec) {
-        let {x, y } = vec
-        if (this.shape.collides(new Vector2(null, x, y))) {
+        let { x, y } = vec
+        if (this.shape.collides(new Circle(null, x, y, 15))) {
             console.log('returning true')
             return true
         }
         return false
     }
 
+    /** Which part of the entity is currently selected for dragging */
+    selected: string = "Horse";
+    
     // selected: "br" | "bl" | "tl" | "tr" | "e" //Bottom/top left/right e = everything 
-
-    selected: string= "Horse";
-    //Picks out a certain part for dragging with the mouse
+    /** Picks out a certain part for dragging with the mouse */
     public selectForMovement(point) {
-        
-
         let bl = new Vector2(null, this.position.x, this.position.y)
         let br = new Vector2(null, this.position.x + this.size.x, this.position.y)
         let tl = new Vector2(null, this.position.x, this.position.y + this.size.y)
@@ -74,7 +84,7 @@ export class EditorEntity extends EntityWIthPosition {
         let THRESHHOLD = 20 // How close the click has to be to select a point 
 
         this.selected = null;
-        console.log("dist",bl.distanceTo(point))
+        console.log("dist", bl.distanceTo(point))
         if (bl.distanceTo(point) < THRESHHOLD) {
             console.log("LESS THAN THE DISTACNE")
             this.selected = "bl"
@@ -92,10 +102,11 @@ export class EditorEntity extends EntityWIthPosition {
         if (this.selected == null) {
             this.selected = 'e'
         }
+        console.log("Selected", this.selected)
     }
 
     // A thing was moved. 
-    public move(vec: Vector2) {
+    public drag(vec: Vector2) {
         switch (this.selected) {
             case "bl":
                 this.position.add(vec)

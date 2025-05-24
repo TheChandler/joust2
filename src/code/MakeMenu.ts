@@ -1,7 +1,8 @@
 import { createEntityList } from './EntityList.js'
-import { MainState } from './States/MainState.ts'
 
-export function makeMenu(state: MainState) {
+import EditorState from "./States/EditorState"
+
+export function makeMenu(state: EditorState) {
     let menuDiv = document.getElementById('mainMenu');
 
     let saveButton = document.createElement('button')

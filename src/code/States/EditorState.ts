@@ -1,32 +1,23 @@
 import { State, Vector2 } from "jsgame";
-import { Entity } from "../gameEntities/Entity.js";
+import { Entity, EntityOptionType } from "../gameEntities/Entity.js";
 import { EditorEntity } from "../gameEntities/EditorEntity.js";
 import { ctx, input } from "../gameMain.js";
 import { createEntityList, entityList } from "../EntityList.js";
-import { makeMenu } from "../MakeMenu"
+import { makeMenu } from "../MakeMenu.js"
 
-export default class MainState implements State {
+export default class EditorState implements State {
 
     circle: any;
     menu: HTMLElement | null;
 
-    editorEntities: Entity[] = []
+    editorEntities: EditorEntity[] = []
     selectedEntity: EditorEntity;
 
     constructor(dependencies: any) {
-        console.log("dep", dependencies)
-
         this.loadLevelData();
-
         this.menu = document.getElementById("mainMenu")
-
-
-        console.log(this.editorEntities)
         document.addEventListener('pointerdown', this.pointerDown.bind(this))
-
         makeMenu(this)
-        
-
     }
 
 
@@ -76,10 +67,15 @@ export default class MainState implements State {
     }
 
     addEntity(entityType) {
+        let classType = entityList.find(c => c.name == entityType.type)
+
+        console.log("classType", classType)
+        console.log("entityType", entityType)
         this.editorEntities.push(new EditorEntity({
             name: entityType.name,
             id: Math.floor(Math.random()*0xFFFFFFFF).toString(16),
             type: entityType.name,
+            image: entityType.image,
             position: new Vector2(null, 0, 0),
             size: new Vector2(null, 40, 40)
         }))
@@ -103,7 +99,12 @@ export default class MainState implements State {
         let vec = new Vector2(null, x, y)
         let selectedEntity = this.getEntityAt(vec)
         if (selectedEntity) {
+            console.log("selectedEntity", selectedEntity.id)
+            if (this.selectedEntity){
+                this.selectedEntity.isActive = false;
+            }
             this.selectedEntity = selectedEntity;
+            this.selectedEntity.isActive = true;
             selectedEntity.selectForMovement(vec)
             this.updateDetails(selectedEntity)
         }
@@ -125,7 +126,7 @@ export default class MainState implements State {
     mousemove(event: MouseEvent) {
         if (this.selectedEntity && input.keys['mouseleft']) {
             let vec = new Vector2(null, event.movementX, event.movementY);
-            this.selectedEntity.move(vec)
+            this.selectedEntity.drag(vec)
         }
     }
     contextmenu(event: MouseEvent) {

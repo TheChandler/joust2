@@ -3,7 +3,6 @@ import { EntityWIthPosition } from "./EntityWithPosition.js";
 import { shapeFactory } from "../gameMain.js";
 
 
-
 export class Platform extends EntityWIthPosition{
 
     
