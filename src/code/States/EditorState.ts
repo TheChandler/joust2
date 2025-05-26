@@ -1,7 +1,7 @@
 import { State, Vector2 } from "jsgame";
 import { Entity, EntityOptionType } from "../gameEntities/Entity.js";
 import { EditorEntity } from "../gameEntities/EditorEntity.js";
-import { ctx, input } from "../gameMain.js";
+import { ctx, input, shapeFactory } from "../gameMain.js";
 import { createEntityList, entityList } from "../EntityList.js";
 import { makeMenu } from "../MakeMenu.js"
 
@@ -20,11 +20,9 @@ export default class EditorState implements State {
         makeMenu(this)
     }
 
-
-
     loadLevelData() {
         let levelData = localStorage.getItem('level')
-        let entities = JSON.parse(levelData)
+        let entities = JSON.parse(levelData) as Entity[] || [];
         for (let entity of entities) {
             let classType = entityList.find(c => c.name == entity.type)
 
@@ -33,8 +31,8 @@ export default class EditorState implements State {
                 id: entity.id,
                 type: entity.type,
                 image: classType.image,
-                position: new Vector2(null, entity.position[0], entity.position[1]),
-                size: new Vector2(null, entity.size[0], entity.size[1])
+                position: shapeFactory.createVector2(entity.position[0],entity.position[1]),
+                size: shapeFactory.createVector2(entity.size[0],entity.size[1])
             }))
 
             // console.log(classType)
@@ -56,8 +54,8 @@ export default class EditorState implements State {
         for (let entity of this.editorEntities) {
             levelData.push({
                 name: entity.name,
-                position: [entity.position.x, entity.position.y],
-                size: [entity.size.x, entity.size.y],
+                position: entity.position,
+                size: entity.size,
                 id: entity.id,
                 type: entity.type,
 

@@ -1,3 +1,4 @@
+import { Vector2 } from "jsgame";
 
 
 
@@ -6,6 +7,15 @@
 
 export abstract class Entity {
 
+    name: string;
+    id: string;
+    type: string;
+    /** Identifies whether the CLASS has a position field */
+    static hasPosition: boolean;
+    position: Vector2;
+    /** Identifies whether the CLASS has a size field */
+    static hasSize: boolean;
+    size: Vector2 | number;
 
     public static options: EntityOption[]
 

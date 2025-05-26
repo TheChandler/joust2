@@ -2,14 +2,13 @@ import { IShape, Shape } from "jsgame/build/IShape.js";
 import { ctx, shapeFactory } from "../gameMain.js";
 import { Entity, EntityOption, EntityOptionType } from "./Entity.js";
 import { Circle, Sprite, Vector2, CreateImage, ShapeFactory } from 'jsgame'
-import { EntityWIthPosition } from "./EntityWithPosition.js";
 import { version } from "typescript";
 
 
 //Todo: Fix createimage naming capitalization and filename
 let spritePlaceholder = CreateImage('./assets/images/testpng.png')
 
-export class EditorEntity extends EntityWIthPosition {
+export class EditorEntity extends Entity {
 
     public static options = [
         new EntityOption("name", EntityOptionType.String),
@@ -17,17 +16,12 @@ export class EditorEntity extends EntityWIthPosition {
         new EntityOption("size", EntityOptionType.Vector)
     ]
 
-    /** Name that shows up in editor */
-    name: string;
     /** IShape representing object */
     shape: Sprite;
     /** Width and height of object */
     size: Vector2;
     /** The entity is selected in the editor*/
     isActive: boolean = false;
-    /**unique identifier */
-    id: string;
-    type: string;
     constructor({ name, position, size, id, type, image }) {
         super();
         this.name = name;

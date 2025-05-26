@@ -1,6 +1,8 @@
 import { createEntityList } from './EntityList.js'
+import { switchState } from './gameMain.js';
 
 import EditorState from "./States/EditorState"
+import PlayState from "./States/PlayState"
 
 export function makeMenu(state: EditorState) {
     let menuDiv = document.getElementById('mainMenu');
@@ -14,6 +16,17 @@ export function makeMenu(state: EditorState) {
         localStorage.setItem('level', levelDataString)
     }
     menuDiv.append(saveButton)
+    
+    
+    let playButton = document.createElement('button')
+    playButton.innerText = 'Play'
+    playButton.onclick = ()=>{
+        switchState(new PlayState({}))
+    }
+    menuDiv.append(playButton)
+
+    
+
     menuDiv.append(createEntityList(state.addEntity.bind(state)))
     let details = document.createElement('div')
     details.id = 'details'
