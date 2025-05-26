@@ -23,7 +23,7 @@ export class EditorEntity extends EntityWIthPosition {
     shape: Sprite;
     /** Width and height of object */
     size: Vector2;
-    /** The entity is selected in the editor*/ 
+    /** The entity is selected in the editor*/
     isActive: boolean = false;
     /**unique identifier */
     id: string;
@@ -43,10 +43,9 @@ export class EditorEntity extends EntityWIthPosition {
     }
 
 
-
+    public color = "#" + Math.floor(Math.random() * 0xffffff).toString(16)
     public draw() {
         // TODO: update sprite class to use vector2 as position and size. This will allow sharing of values more directly
-
         this.shape.x = this.position.x;
         this.shape.y = this.position.y;
         this.shape.width = this.size.x;
@@ -65,11 +64,10 @@ export class EditorEntity extends EntityWIthPosition {
         shapeFactory.createSprite(spritePlaceholder, this.shape.x, this.shape.y, this.shape.width, this.shape.height).draw()
         let { x, y } = vec
         //Using circle is currently causing this not to work
-        let c = shapeFactory.createCircle(x,y, 15)
-        c.draw('#F00')
-        
-        if (this.shape.collides(c)) {
-            console.log('returning true')
+        let c = shapeFactory.createCircle(x, y, 15)
+
+
+        if (this.shape.collides(c, true)) {
             return true
         }
         return false
@@ -77,7 +75,7 @@ export class EditorEntity extends EntityWIthPosition {
 
     /** Which part of the entity is currently selected for dragging */
     selected: string = "Horse";
-    
+
     // selected: "br" | "bl" | "tl" | "tr" | "e" //Bottom/top left/right e = everything 
     /** Picks out a certain part for dragging with the mouse */
     public selectForMovement(point) {
