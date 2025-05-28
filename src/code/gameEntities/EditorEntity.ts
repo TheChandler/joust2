@@ -18,8 +18,6 @@ export class EditorEntity extends Entity {
 
     /** IShape representing object */
     shape: Sprite;
-    /** Width and height of object */
-    size: Vector2;
     /** The entity is selected in the editor*/
     isActive: boolean = false;
     constructor({ name, position, size, id, type, image }) {

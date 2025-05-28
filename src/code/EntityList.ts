@@ -1,7 +1,7 @@
 
-import { Ball } from './gameEntities/Ball.js'
-import { EditorEntity } from './gameEntities/EditorEntity.js'
-import { Platform } from './gameEntities/Platform.js'
+import { Ball } from './GameEntities/Ball.js'
+import { EditorEntity } from './GameEntities/EditorEntity.js'
+import { Platform } from './GameEntities/Platform.js'
 
 
 export const entityList = [

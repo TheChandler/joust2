@@ -2,6 +2,7 @@ import { Circle, CreateImage, Sprite, Vector2 } from "jsgame";
 import { shapeFactory } from "../gameMain.js";
 import { Entity, EntityOption, EntityOptionType } from "./Entity.js";
 import { IShape } from "jsgame/build/IShape.js";
+import { COLLISION_TYPE } from "../Constants/CollisionTypes.js";
 
 
 
@@ -22,36 +23,39 @@ export class Ball extends Entity {
         new EntityOption("size", EntityOptionType.Vector)
     ]
 
-    shape: Circle;
+    collisionShape: Circle = null;
     isActive: boolean = false;
     velocity: Vector2;
-
+    collisionType: COLLISION_TYPE = COLLISION_TYPE.MOBILE_COLLISION;
 
     constructor({ name, position, size, id, type, image }) {
         super();
+        console.log("Ball",JSON.stringify(this))
         this.name = name;
         this.id = id;
         this.type = type;
 
         this.size = size[0];
-        this.shape = shapeFactory.createCircle(position.x, position.y, this.size as number);
-        this.position = this.shape.position;
+        this.collisionShape = shapeFactory.createCircle(position.x, position.y, (this.size as number)/2);
+        this.position = this.collisionShape.position;
         this.velocity = shapeFactory.createVector2(0, 0);
 
+        this.create();
     }
-
 
     public update() {
         this.draw()
-        if (this.position.y > 100){
-            this.velocity.y = - Math.abs(Math.sqrt(((this.velocity.y*this.velocity.y) * .85) + (this.position.y - 100)))
-        }
         this.velocity.y += .5
         this.position.add(this.velocity);
 
     }
     public draw() {
-        this.shape.draw('#f00');
+        this.collisionShape.draw('#f00');
+    }
+
+    public collide(entity: Entity) {
+        console.log("Collided", entity.type, entity.id)
+        this.velocity.y = - 5// Math.abs(Math.sqrt(((this.velocity.y*this.velocity.y) * .85) + (this.position.y - 100)))
     }
 
 }

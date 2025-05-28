@@ -1,9 +1,8 @@
 import { State, Vector2 } from "jsgame";
-import { createEntityList, entityList } from "../EntityList.js";
+import { createEntityList, entityList } from "../EntityList";
 import { Entity } from "../gameEntities/Entity.js";
 import { killGame, shapeFactory } from "../gameMain.js";
-
-
+import { collisionSystem } from "../Systems/PlayState/CollisionSystem.js";
 
 export default class PlayState implements State {
 
@@ -23,6 +22,8 @@ export default class PlayState implements State {
         // throw new Error("Method not implemented.");
     }
     update(): void {
+        
+        collisionSystem.update()
         this.entities.forEach(e => {
             try {
                 e.update()
