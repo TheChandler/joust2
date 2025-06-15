@@ -14,7 +14,7 @@ export abstract class Entity {
     /** Identifies whether the CLASS has a size field */
     static hasSize: boolean;
     /** Width and height of object */
-    size: Vector2 | number;
+    size: Vector2;
 
     /** Dictate the type of checking that will be done for collisions */
     collisionType: COLLISION_TYPE = COLLISION_TYPE.NO_COLLISION;

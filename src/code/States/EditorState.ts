@@ -31,8 +31,8 @@ export default class EditorState implements State {
                 id: entity.id,
                 type: entity.type,
                 image: classType.image,
-                position: shapeFactory.createVector2(entity.position[0],entity.position[1]),
-                size: shapeFactory.createVector2(entity.size[0],entity.size[1])
+                position: shapeFactory.createVector2(entity.position[0], entity.position[1]),
+                size: shapeFactory.createVector2(entity.size[0], entity.size[1])
             }))
 
             // console.log(classType)
@@ -41,8 +41,8 @@ export default class EditorState implements State {
 
             //     this.editorEntities.push(new classType({
             //         image:null,
-            //         position: new Vector2(null, entity.position[0], entity.position[1]),
-            //         size: new Vector2(null, entity.size[0], entity.size[1])
+            //         position: new Vector2( entity.position[0], entity.position[1]),
+            //         size: new Vector2( entity.size[0], entity.size[1])
             //     }))
             // } else{
             //     console.log("not found", entity.type, entityList)
@@ -74,8 +74,8 @@ export default class EditorState implements State {
             id: Math.floor(Math.random() * 0xFFFFFFFF).toString(16),
             type: entityType.name,
             image: entityType.image,
-            position: new Vector2(null, 0, 0),
-            size: new Vector2(null, 40, 40)
+            position: new Vector2(0, 0),
+            size: new Vector2(40, 40)
         }))
 
     }
@@ -94,9 +94,9 @@ export default class EditorState implements State {
     pointerDown(event: MouseEvent) {
         console.log(this.editorEntities)
         let [x, y] = ctx.convertScreenCordsToWorldCords(event.clientX, event.clientY)
-        let vec = new Vector2(null, x, y)
+        let vec = new Vector2(x, y)
         if (!this.selectedEntity || !this.selectedEntity.isAtLocation(vec)) {
-            if (this.selectedEntity){
+            if (this.selectedEntity) {
                 this.selectedEntity.isActive = false;
             }
             this.selectedEntity = this.getEntityAt(vec)
@@ -124,14 +124,14 @@ export default class EditorState implements State {
 
     mousemove(event: MouseEvent) {
         if (this.selectedEntity && input.keys['mouseleft']) {
-            let vec = new Vector2(null, event.movementX, event.movementY);
+            let vec = new Vector2(event.movementX, event.movementY);
             this.selectedEntity.drag(vec)
         }
     }
     contextmenu(event: MouseEvent) {
         event.preventDefault()
         let [x, y] = ctx.convertScreenCordsToWorldCords(event.clientX, event.clientY)
-        let vec = new Vector2(null, x, y)
+        let vec = new Vector2(x, y)
         let selectedEntity = this.getEntityAt(vec);
         this.editorEntities = this.editorEntities.filter(e => e.id != selectedEntity.id)
     }

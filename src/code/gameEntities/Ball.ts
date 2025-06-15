@@ -1,5 +1,5 @@
-import { Circle, CreateImage, Sprite, Vector2 } from "jsgame";
-import { shapeFactory } from "../gameMain.js";
+import { Circle, CreateImage, DrawableCircle, DrawableSprite, Sprite, Vector2 } from "jsgame";
+import { killGame, shapeFactory } from "../gameMain.js";
 import { Entity, EntityOption, EntityOptionType } from "./Entity.js";
 import { IShape } from "jsgame/build/IShape.js";
 import { COLLISION_TYPE } from "../Constants/CollisionTypes.js";
@@ -23,22 +23,27 @@ export class Ball extends Entity {
         new EntityOption("size", EntityOptionType.Vector)
     ]
 
-    collisionShape: Circle = null;
+    collisionShape: DrawableCircle = null;
     isActive: boolean = false;
     velocity: Vector2;
     collisionType: COLLISION_TYPE = COLLISION_TYPE.MOBILE_COLLISION;
 
+    sprite: DrawableSprite;
+
+    //Remember when passed from saved state these will not have class functions. AKA size.x will not work since size is a length-2 array
     constructor({ name, position, size, id, type, image }) {
         super();
-        console.log("Ball",JSON.stringify(this))
+        console.log("Ball", JSON.stringify(this))
         this.name = name;
         this.id = id;
         this.type = type;
 
-        this.size = size[0];
-        this.collisionShape = shapeFactory.createCircle(position.x, position.y, (this.size as number)/2);
+        this.size = new Vector2(size[0], size[1]);
+        this.collisionShape = shapeFactory.createCircle(position.x, position.y, this.size.x / 2);
         this.position = this.collisionShape.position;
-        this.velocity = shapeFactory.createVector2(0, 0);
+        this.velocity = shapeFactory.createVector2(Math.random() - .5, 0);
+
+        this.sprite = shapeFactory.createSprite(Ball.image, this.position.x - (this.size.x / 2), this.position.y - (this.size.x / 2), this.size.x, this.size.x)
 
         this.create();
     }
@@ -50,12 +55,32 @@ export class Ball extends Entity {
 
     }
     public draw() {
-        this.collisionShape.draw('#f00');
+        // console.log("drawing", this.collisionShape)
+        this.sprite.x = this.position.x - (this.size.x / 2);
+        this.sprite.y = this.position.y - (this.size.x / 2);
+        this.sprite.draw();
+        // this.collisionShape.draw('#f00');
     }
 
+    private normalize(vec: Vector2) {
+        let hyp = Math.sqrt((vec.x * vec.x) + (vec.y + vec.y))
+        return new Vector2(vec.x / hyp, vec.y / hyp)
+
+    }
     public collide(entity: Entity) {
-        console.log("Collided", entity.type, entity.id)
-        this.velocity.y = - 5// Math.abs(Math.sqrt(((this.velocity.y*this.velocity.y) * .85) + (this.position.y - 100)))
+
+        if (entity instanceof Ball) {
+            let difference = entity.position.difference(this.position)
+            console.log("difference", difference)
+        }
+        else {
+
+            // console.log("Collided", entity.type, entity.id)
+            this.velocity.y = - this.velocity.y * ((Math.sqrt(this.velocity.y + 500)) / 30)
+            // this.velocity.y = this.velocity.y < 1 ? 0 : this.velocity.y
+            this.position.y = entity.position.y - (this.size.x / 2)
+            this.velocity.x *= .9
+        }
     }
 
 }

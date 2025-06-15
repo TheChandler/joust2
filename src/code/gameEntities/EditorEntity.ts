@@ -1,7 +1,7 @@
 import { IShape, Shape } from "jsgame/build/IShape.js";
 import { ctx, shapeFactory } from "../gameMain.js";
 import { Entity, EntityOption, EntityOptionType } from "./Entity.js";
-import { Circle, Sprite, Vector2, CreateImage, ShapeFactory } from 'jsgame'
+import { Circle, Sprite, Vector2, CreateImage, ShapeFactory, DrawableSprite } from 'jsgame'
 import { version } from "typescript";
 
 
@@ -17,7 +17,7 @@ export class EditorEntity extends Entity {
     ]
 
     /** IShape representing object */
-    shape: Sprite;
+    shape: DrawableSprite;
     /** The entity is selected in the editor*/
     isActive: boolean = false;
     constructor({ name, position, size, id, type, image }) {
@@ -26,7 +26,7 @@ export class EditorEntity extends Entity {
         this.id = id;
         this.type = type;
         this.position = position;
-        this.size = size;
+        this.size = size as Vector2;
 
         this.shape = shapeFactory.createSprite(image ?? spritePlaceholder, position.x, position.y, size.x, size.y)
     }
@@ -71,10 +71,10 @@ export class EditorEntity extends Entity {
     // selected: "br" | "bl" | "tl" | "tr" | "e" //Bottom/top left/right e = everything 
     /** Picks out a certain part for dragging with the mouse */
     public selectForMovement(point) {
-        let bl = new Vector2(null, this.position.x, this.position.y)
-        let br = new Vector2(null, this.position.x + this.size.x, this.position.y)
-        let tl = new Vector2(null, this.position.x, this.position.y + this.size.y)
-        let tr = new Vector2(null, this.position.x + this.size.x, this.position.y + this.size.y)
+        let bl = new Vector2(this.position.x, this.position.y)
+        let br = new Vector2(this.position.x + this.size.x, this.position.y)
+        let tl = new Vector2(this.position.x, this.position.y + this.size.y)
+        let tr = new Vector2(this.position.x + this.size.x, this.position.y + this.size.y)
 
         let THRESHHOLD = 20 // How close the click has to be to select a point 
 
