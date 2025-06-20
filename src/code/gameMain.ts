@@ -8,8 +8,10 @@ export const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementB
 // canvas.height = canvas.clientHeight;
 // canvas.width = canvas.clientWidth;
 
-canvas.height = 640;
-canvas.width = 1137;
+let scale = 50
+canvas.height = 9* scale;
+canvas.width = 16 * scale;
+
 
 export const c = <CanvasRenderingContext2D>canvas.getContext("2d", { alpha: false })
 export const ctx = CameraConstructor.MakeGameCamera(c, canvas, 0, 0);
@@ -36,7 +38,7 @@ export const killGame = () => { KILL = true };
 let tickLength = 1000 / FRAMERATE;
 let nextTickTime = 0;
 function update() {
-    while (performance.now() > nextTickTime) {
+    if (performance.now() > nextTickTime) {
         if ((performance.now() - nextTickTime) > (tickLength * 10)) {
             nextTickTime = performance.now() + tickLength
         } else {

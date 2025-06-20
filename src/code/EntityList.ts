@@ -1,12 +1,14 @@
 
 import { Ball } from './GameEntities/Ball.js'
 import { EditorEntity } from './GameEntities/EditorEntity.js'
+import { ParticleEmitter } from './GameEntities/ParticleEmitter.js'
 import { Platform } from './GameEntities/Platform.js'
 
 
 export const entityList = [
     Platform,
-    Ball
+    Ball,
+    ParticleEmitter
 ]
 
 export function createEntityList(create) {

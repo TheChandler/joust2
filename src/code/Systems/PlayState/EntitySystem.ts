@@ -1,5 +1,8 @@
 import { Entity } from "../../GameEntities/Entity"
 
+
+
+//TODO: Actually use this class
 export class EntitySystem {
 
     entities: Entity[];

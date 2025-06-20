@@ -31,9 +31,9 @@ export class Ball extends Entity {
     sprite: DrawableSprite;
 
     //Remember when passed from saved state these will not have class functions. AKA size.x will not work since size is a length-2 array
-    constructor({ name, position, size, id, type, image }) {
+    constructor({ name, position, size, id, type, image, velocity }) {
         super();
-        console.log("Ball", JSON.stringify(this))
+        // console.log("Ball", JSON.stringify(this))
         this.name = name;
         this.id = id;
         this.type = type;
@@ -42,20 +42,32 @@ export class Ball extends Entity {
         this.collisionShape = shapeFactory.createCircle(position.x, position.y, this.size.x / 2);
         this.position = this.collisionShape.position;
         this.velocity = shapeFactory.createVector2(Math.random() - .5, 0);
+        if (velocity) {
+            this.velocity.x = velocity[0]
+            this.velocity.y = velocity[1]
+        }
 
         this.sprite = shapeFactory.createSprite(Ball.image, this.position.x - (this.size.x / 2), this.position.y - (this.size.x / 2), this.size.x, this.size.x)
 
+        // console.log("Created ball", position)
         this.create();
     }
 
     public update() {
-        this.draw()
-        this.velocity.y += .5
-        this.position.add(this.velocity);
+        // console.log("updating", this.name)
+        // this.velocity.y += 1.5
+        // this.position.add(this.velocity);
+        let length1 = Math.sqrt((this.position.x * this.position.x) +(this.position.y * this.position.y) )
+        
+        this.position.rotate(.05)
+        let length2 = Math.sqrt((this.position.x * this.position.x) +(this.position.y * this.position.y) )
+        console.log("Lengths:" ,length1,length2)
 
     }
     public draw() {
         // console.log("drawing", this.collisionShape)
+        if (this.name == "particle ball") {
+        }
         this.sprite.x = this.position.x - (this.size.x / 2);
         this.sprite.y = this.position.y - (this.size.x / 2);
         this.sprite.draw();
@@ -71,7 +83,7 @@ export class Ball extends Entity {
 
         if (entity instanceof Ball) {
             let difference = entity.position.difference(this.position)
-            console.log("difference", difference)
+            // console.log("difference", difference)
         }
         else {
 

@@ -1,15 +1,18 @@
 import { State, Vector2 } from "jsgame";
 import { createEntityList, entityList } from "../EntityList";
-import { Entity } from "../gameEntities/Entity.js";
-import { killGame, shapeFactory } from "../gameMain.js";
-import { collisionSystem } from "../Systems/PlayState/CollisionSystem.js";
+import { Entity } from "../GameEntities/Entity";
+import { killGame, shapeFactory } from "../gameMain";
+import { collisionSystem } from "../Systems/PlayState/CollisionSystem";
+import { ParticleSystem } from '../Systems/PlayState/ParticleSystem'
 
 export default class PlayState implements State {
 
     entities: Entity[] = []
+    particleSystem = new ParticleSystem();
 
     constructor(dependencies: any) {
         this.loadLevelData();
+
     }
     name?: string | undefined;
     click(event: Event): void {
@@ -22,14 +25,13 @@ export default class PlayState implements State {
         // throw new Error("Method not implemented.");
     }
     update(): void {
-        
+        // console.log("length", this.entities.length)
         collisionSystem.update()
         this.entities.forEach(e => {
             try {
                 e.update()
                 //@ts-ignore
                 if (e.draw) {
-                    //@ts-ignore
                     e.draw()
                 }
             } catch (err) {
@@ -37,6 +39,10 @@ export default class PlayState implements State {
                 killGame();
             }
         })
+
+
+        this.particleSystem.update()
+        this.particleSystem.draw()
     }
 
     loadLevelData() {
@@ -66,8 +72,10 @@ export default class PlayState implements State {
                 if (classType.hasSize) {
                     payload.size = entity.size
                 }
+                payload.addEntity = (x, y, xvel, yvel, lt) => { this.particleSystem.add(x, y, xvel, yvel, lt) };
+                let newEntity = new classType(payload)
 
-                this.entities.push(new classType(payload))
+                this.entities.push(newEntity)
             } else {
                 console.log("not found", entity.type, entityList)
             }

@@ -9,12 +9,13 @@ export abstract class Entity {
     id: string;
     type: string;
     /** Identifies whether the CLASS has a position field */
-    static hasPosition: boolean;
+    static hasPosition: boolean = false;
     position: Vector2;
     /** Identifies whether the CLASS has a size field */
-    static hasSize: boolean;
+    static hasSize: boolean = false;
     /** Width and height of object */
     size: Vector2;
+    
 
     /** Dictate the type of checking that will be done for collisions */
     collisionType: COLLISION_TYPE = COLLISION_TYPE.NO_COLLISION;
@@ -48,6 +49,9 @@ export abstract class Entity {
 
     public collide(entity: Entity) {
         throw Error("Collsion on non-implented collide method");
+    }
+    public draw(){
+
     }
 
 
