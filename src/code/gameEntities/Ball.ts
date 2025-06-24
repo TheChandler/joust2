@@ -61,7 +61,7 @@ export class Ball extends Entity {
         
         this.position.rotate(.05)
         let length2 = Math.sqrt((this.position.x * this.position.x) +(this.position.y * this.position.y) )
-        console.log("Lengths:" ,length1,length2)
+
 
     }
     public draw() {
