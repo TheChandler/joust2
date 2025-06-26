@@ -1,5 +1,5 @@
 import { State, Vector2 } from "jsgame";
-import { Entity } from "../gameEntities/Entity.js";
+import { Entity } from "../GameEntities/Entity";
 import { EditorEntity } from "../GameEntities/EditorEntity.js";
 import { ctx, input, shapeFactory } from "../gameMain.js";
 import { createEntityList, entityList } from "../EntityList.js";

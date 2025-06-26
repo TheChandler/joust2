@@ -15,6 +15,7 @@ export abstract class Entity {
     static hasSize: boolean = false;
     /** Width and height of object */
     size: Vector2;
+    static image
     
 
     /** Dictate the type of checking that will be done for collisions */
