@@ -44,6 +44,8 @@ export default class PlayState implements State {
         this.particleSystem.update()
         this.particleSystem.draw()
     }
+    
+
 
     loadLevelData() {
         let levelData = localStorage.getItem('level')

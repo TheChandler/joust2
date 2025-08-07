@@ -3,13 +3,14 @@ import { ShapeFactory } from "jsgame";
 import { createEntityList } from "./EntityList.js";
 import { StateManager } from "./StateManager.js";
 import EditorState from "./States/EditorState.js";
+import { InputHandler } from './Systems/InputHandler'
 
 export const canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canv");
 // canvas.height = canvas.clientHeight;
 // canvas.width = canvas.clientWidth;
 
 let scale = 50
-canvas.height = 9* scale;
+canvas.height = 9 * scale;
 canvas.width = 16 * scale;
 
 
@@ -23,10 +24,15 @@ export const staticShapeFactory = new ShapeFactory(staticCtx)
 let stateContainer = new StateManager({ c, ctx, staticCtx, shapeFactory, staticShapeFactory });
 stateContainer.setState(EditorState)
 
+export const inputHandler = new InputHandler()
+
 canvas.addEventListener('click', (event) => stateContainer.state.click(event))
 canvas.addEventListener("mousemove", (event) => stateContainer.state.mousemove(event))
 canvas.addEventListener('contextmenu', (event) => stateContainer.state.contextmenu(event))
 
+canvas.addEventListener('keydown', (e) => inputHandler.keyDown(e))
+canvas.addEventListener('keyup', (e) => inputHandler.keyUp(e))
+ 
 
 export const input = new Input();
 export const FRAMERATE = 60;
@@ -53,7 +59,7 @@ function update() {
     }
     if (!KILL) {
         requestAnimationFrame(update)
-    }else{
+    } else {
         console.log("Game killed")
     }
 }

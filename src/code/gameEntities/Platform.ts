@@ -1,4 +1,4 @@
-import { CreateImage, Sprite, Vector2 } from "jsgame";
+import { CreateImage, DrawableSprite, Sprite, Vector2 } from "jsgame";
 import { shapeFactory } from "../gameMain.js";
 import { Entity } from "./Entity.js";
 import { COLLISION_TYPE } from "../Constants/CollisionTypes.js";
@@ -9,7 +9,7 @@ export class Platform extends Entity {
     static hasSize: boolean = true;
     static hasPosition: boolean = true;
 
-    sprite: Sprite;
+    sprite: DrawableSprite;
     collisionType: COLLISION_TYPE= COLLISION_TYPE.STATIC_COLLISION;
 
     static image = CreateImage('./assets/images/testPlatform.png')
