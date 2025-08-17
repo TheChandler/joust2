@@ -4,10 +4,11 @@ import { Entity } from "../GameEntities/Entity";
 import { killGame, shapeFactory } from "../gameMain";
 import { collisionSystem } from "../Systems/PlayState/CollisionSystem";
 import { ParticleSystem } from '../Systems/PlayState/ParticleSystem'
+import { EntitySystem } from '../Systems/PlayState/EntitySystem'
 
 export default class PlayState implements State {
 
-    entities: Entity[] = []
+    entitySystem: EntitySystem = new EntitySystem([]);
     particleSystem = new ParticleSystem();
 
     constructor(dependencies: any) {
@@ -27,24 +28,13 @@ export default class PlayState implements State {
     update(): void {
         // console.log("length", this.entities.length)
         collisionSystem.update()
-        this.entities.forEach(e => {
-            try {
-                e.update()
-                //@ts-ignore
-                if (e.draw) {
-                    e.draw()
-                }
-            } catch (err) {
-                console.log("Entity failed to update", e, err)
-                killGame();
-            }
-        })
 
+        this.entitySystem.update();
 
         this.particleSystem.update()
         this.particleSystem.draw()
     }
-    
+
 
 
     loadLevelData() {
@@ -65,6 +55,8 @@ export default class PlayState implements State {
                     id: entity.id,
                     type: entity.type,
                     image: null,
+                    particleSystem: this.particleSystem,
+                    entitySystem: this.entitySystem,
 
                 }
 
@@ -74,10 +66,9 @@ export default class PlayState implements State {
                 if (classType.hasSize) {
                     payload.size = entity.size
                 }
-                payload.addEntity = (x, y, xvel, yvel, lt) => { this.particleSystem.add(x, y, xvel, yvel, lt) };
                 let newEntity = new classType(payload)
 
-                this.entities.push(newEntity)
+                this.entitySystem.add(newEntity)
             } else {
                 console.log("not found", entity.type, entityList)
             }

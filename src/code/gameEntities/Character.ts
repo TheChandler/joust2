@@ -25,8 +25,8 @@ enum walkingState {
 }
 const WALKING_SPEED_1 = 1.5;
 const WALKING_SPEED_2 = 4;
-const WALKING_SPEED_3 = 10;
-const DELAY_TIME = 50;
+const WALKING_SPEED_3 = 8;
+const DELAY_TIME = 20;
 
 export class Character extends Entity {
     static hasPosition = true;
@@ -68,7 +68,7 @@ export class Character extends Entity {
 
         this.state.update(input);
 
-        console.log(this.position, this.velocity)
+        // console.log(this.position, this.velocity)
         this.position = this.position.add(this.velocity);
         this.sprite.x = this.position.x;
         this.sprite.y = this.position.y;

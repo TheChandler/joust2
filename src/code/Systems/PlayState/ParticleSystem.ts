@@ -56,14 +56,19 @@ export class ParticleSystem {
         }
     }
     itteration = 100;
+
+    bmap: ImageBitmap;
+    bmap2: ImageBitmap;
     draw() {
         if (!this.itteration) {
             // killGame()
             // return
         }
-        this.itteration--;
+        this.itteration++;
         // console.time()
-        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        // let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let imageData = new ImageData(canvas.width, canvas.height);
         let data = imageData.data
 
 
@@ -76,7 +81,7 @@ export class ParticleSystem {
         let offsetY = upperBound
 
 
-
+        // Draw main particle
         for (let i = 0; i < ParticleSystem.ARRAY_SIZE; i++) {
             if (this.lifetime[i]) {
 
@@ -85,16 +90,87 @@ export class ParticleSystem {
 
                 let pixel = x + (y * canvas.width)
                 let f = pixel * 4;
-
                 data[f] = 255;
                 data[f + 1] = 0
                 data[f + 2] = 0
+                data[f + 3] = 255
 
             }
         }
 
-        ctx.putImageData(imageData, 0, 0);
+        let imageData2 = new ImageData(canvas.width, canvas.height);
+        let data2 = imageData2.data
+        // particle post processing
+        data.forEach((p, i) => {
+            if (i % 4 == 0 && data[i + 3] == 0) {
+                if (countOpacityInAdjacentPixels(i, data) > 0) {
+                    data2[i + 3] = countOpacityInAdjacentPixels(i, data) / 8
+                    data2[i] = 255;
+
+                }
+
+            }
+        })
+        createImageBitmap(imageData)
+            .then((x) => {
+                this.bmap = x;
+            });
+        createImageBitmap(imageData2)
+            .then((x) => {
+                this.bmap2 = x;
+            });
+
+        ctx.drawImage(this.bmap, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
+        ctx.drawImage(this.bmap2, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
+        // ctx.putImageData(imageData, 0, 0);
         // console.timeEnd()
     }
 
+}
+
+function convertToCords(i) {
+    let y = Math.floor(i / canvas.width);
+    let x = i % canvas.width;
+    return [x, y]
+
+}
+function convertToIndex(x, y) {
+    return x + (y * canvas.width)
+}
+function countOpacityInAdjacentPixels(index, data) {
+    // let indexes = [
+    //     convertToIndex(x - 1, y - 1),
+    //     convertToIndex(x - 1, y),
+    //     convertToIndex(x - 1, y + 1),
+    //     convertToIndex(x, y - 1),
+    //     convertToIndex(x, y),
+    //     convertToIndex(x, y + 1),
+    //     convertToIndex(x + 1, y - 1),
+    //     convertToIndex(x + 1, y),
+    //     convertToIndex(x + 1, y + 1)
+    // ]
+
+
+    // left and right seem swapped for some reason
+    let indexes = [
+        index + (canvas.width * 4) + 3, // Above
+        // // index  + 3, // Me?
+        index - (canvas.width * 4) + 3, // Below
+        index + (canvas.width * 4) - 1, // Above + left
+        index + -1, // Me + left
+        index - (canvas.width * 4) + -1, // Below + left
+        index + (canvas.width * 4) + 7, // Above + right
+        index + 7, // Me + right
+        index - (canvas.width * 4) + 7, // Below + right
+    ]
+
+    // console.log("Differences", differences, indexes)
+
+    let totalOpacity = 0;
+    indexes.forEach(i => {
+        if (i > 0) {
+            totalOpacity += data[i]
+        }
+    })
+    return totalOpacity
 }
