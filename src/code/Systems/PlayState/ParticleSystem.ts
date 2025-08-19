@@ -1,76 +1,118 @@
-import { canvas, ctx, killGame } from '../../gameMain'
+import { canvas, ctx } from '../../gameMain';
+import ModuleFactory from './wasm/particle.js';
+
+
 
 
 export class ParticleSystem {
 
-    static ARRAY_SIZE = 10000000;
+    arraySize: number;
 
-    xpositions = new Int16Array(ParticleSystem.ARRAY_SIZE)
-    ypositions = new Int16Array(ParticleSystem.ARRAY_SIZE)
-    xvel = new Int16Array(ParticleSystem.ARRAY_SIZE)
-    yvel = new Int16Array(ParticleSystem.ARRAY_SIZE)
-    lifetime = new Int16Array(ParticleSystem.ARRAY_SIZE)
-
+    // These will become views into the Wasm memory
+    xpositions: Int16Array;
+    ypositions: Int16Array;
+    xvel: Int16Array;
+    yvel: Int16Array;
+    lifetime: Int16Array;
 
     nextOpen: number = 0;
-    constructor() {
-        // for (let i = 0; i < ParticleSystem.ARRAY_SIZE; i++) {
-        //     this.xvel[i] = Math.random() * 200
-        //     this.yvel[i] = (Math.random() * 60) - 30
-        //     this.ypositions[i] = canvas.height << 4
-        //     this.lifetime[i] = 500
-        // }
-        this.xpositions[0] = 0
-        this.ypositions[0] = 0
-        this.lifetime[0] = 100
 
-        // this.xvel[0] = 160;
-        // this.yvel[0] = 0
-        // this.xpositions[0] = 50
+    private wasmModule: EmscriptenModule & { ccall: any };
+    private nextOpenPtr: number;
+
+    constructor() {
+        // The constructor is now empty. Initialization is done in the async initialize method.
+        this.initialize();
+    }
+    private initialized: boolean = false;
+    async initialize() {
+        console.log('Initializing Particle System and Wasm...');
+        this.wasmModule = await ModuleFactory();
+
+        // Initialize the wasm module and allocate memory
+        const initSuccess = this.wasmModule.ccall('init', 'boolean', [], []);
+        if (!initSuccess) {
+            throw new Error("Failed to initialize wasm particle system: memory allocation failed.");
+        }
+
+        this.arraySize = this.wasmModule.ccall('get_array_size', 'number', [], []);
+
+        // Get pointers to the arrays in wasm memory
+        const x_ptr = this.wasmModule.ccall('get_x_positions', 'number', [], []);
+        const y_ptr = this.wasmModule.ccall('get_y_positions', 'number', [], []);
+        const xvel_ptr = this.wasmModule.ccall('get_x_vel', 'number', [], []);
+        const yvel_ptr = this.wasmModule.ccall('get_y_vel', 'number', [], []);
+        const lifetime_ptr = this.wasmModule.ccall('get_lifetime', 'number', [], []);
+        this.nextOpenPtr = this.wasmModule.ccall('get_next_open', 'number', [], []);
+
+        // Create TypedArray views that point directly to the wasm memory
+        try {
+
+            this.xpositions = new Int16Array(this.wasmModule.HEAP16.buffer, x_ptr, this.arraySize);
+            this.ypositions = new Int16Array(this.wasmModule.HEAP16.buffer, y_ptr, this.arraySize);
+            this.xvel = new Int16Array(this.wasmModule.HEAP16.buffer, xvel_ptr, this.arraySize);
+            this.yvel = new Int16Array(this.wasmModule.HEAP16.buffer, yvel_ptr, this.arraySize);
+            this.lifetime = new Int16Array(this.wasmModule.HEAP16.buffer, lifetime_ptr, this.arraySize);
+        } catch (e) {
+            console.error(e)
+            console.log(this.wasmModule)
+        }
+        this.initialized = true;
+
+        // console.log('Particle System initialized successfully.');
+
+        // this.xpositions.fill(66)
+        // console.log("XPositions", JSON.stringify(this.xpositions))
+        // console.log("WASM TEST 1", this.wasmModule.ccall("testXpositions","number"))
+
+        // this.wasmModule.ccall("testXpositions2", null);
+        // console.log("WASM TEST 2", JSON.stringify(this.xpositions))
     }
 
-    add(x, y, xvel, yvel, lifetime) {
-        let i = this.nextOpen++;
+    add(x: number, y: number, xvel: number, yvel: number, lifetime: number) {
+        if (!this.initialized) return; // Not initialized yet
+
+        // Get the next available particle index from wasm memory
+        let i = this.nextOpen;
+        this.nextOpen = (this.nextOpen + 1) % this.arraySize;
+
         this.xvel[i] = xvel;
         this.yvel[i] = yvel;
-        // this.xvel[i] = 0;
-        // this.yvel[i] = 0;
         this.xpositions[i] = x << 4;
         this.ypositions[i] = y << 4;
-        // this.xpositions[i] = 0;
-        // this.ypositions[i] = 0;
-        this.lifetime[i] = lifetime
-    }
-    update() {
-        for (let i = 0; i < ParticleSystem.ARRAY_SIZE; i++) {
-            if (this.lifetime[i]) {
-                // console.log(i)
-                this.xpositions[i] += this.xvel[i]
-                this.ypositions[i] += this.yvel[i]
-                this.yvel[i] += 0x0002
-                this.lifetime[i] = this.lifetime[i] - 1
-                if (!this.lifetime[i]) {
-                    this.nextOpen = i
-                }
-            }
-        }
-    }
-    itteration = 100;
+        this.lifetime[i] = lifetime;
 
+    }
+
+    update() {
+        if (!this.initialized) return; // Not initialized yet
+        // Call the high-performance update function in WebAssembly
+        this.wasmModule.ccall('update', null, [], []);
+    }
+
+    itteration = 100;
     bmap: ImageBitmap;
     bmap2: ImageBitmap;
+
     draw() {
+
+        if (!this.initialized) {
+            console.log("NOT INITIALIZED");
+            return; // Not initialized yet
+        }
+        if (!this.xpositions) {
+            console.log("NOT INITIALIZED")
+            return; // Don't draw if not initialized
+        }
+
         if (!this.itteration) {
             // killGame()
             // return
         }
         this.itteration++;
-        // console.time()
 
-        // let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         let imageData = new ImageData(canvas.width, canvas.height);
         let data = imageData.data
-
 
         let leftBound = ctx.position.x - (ctx.size.x / 2)
         let rightBound = ctx.position.x + (ctx.size.x / 2)
@@ -80,13 +122,13 @@ export class ParticleSystem {
         let offsetX = leftBound
         let offsetY = upperBound
 
-
         // Draw main particle
-        for (let i = 0; i < ParticleSystem.ARRAY_SIZE; i++) {
+        for (let i = 0; i < this.arraySize; i++) {
             if (this.lifetime[i]) {
-
                 let y = (this.ypositions[i] >> 4) - offsetY
                 let x = (this.xpositions[i] >> 4) - offsetX
+
+                if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) continue;
 
                 let pixel = x + (y * canvas.width)
                 let f = pixel * 4;
@@ -94,10 +136,10 @@ export class ParticleSystem {
                 data[f + 1] = 0
                 data[f + 2] = 0
                 data[f + 3] = 255
-
             }
         }
 
+        
         let imageData2 = new ImageData(canvas.width, canvas.height);
         let data2 = imageData2.data
         // particle post processing
@@ -106,7 +148,6 @@ export class ParticleSystem {
                 if (countOpacityInAdjacentPixels(i, data) > 0) {
                     data2[i + 3] = countOpacityInAdjacentPixels(i, data) / 8
                     data2[i] = 255;
-
                 }
 
             }
@@ -115,18 +156,13 @@ export class ParticleSystem {
             .then((x) => {
                 this.bmap = x;
             });
-        createImageBitmap(imageData2)
-            .then((x) => {
-                this.bmap2 = x;
-            });
 
-        ctx.drawImage(this.bmap, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
-        ctx.drawImage(this.bmap2, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
-        // ctx.putImageData(imageData, 0, 0);
-        // console.timeEnd()
+        if (this.bmap) {
+            ctx.drawImage(this.bmap, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
+        }
     }
-
 }
+
 
 function convertToCords(i) {
     let y = Math.floor(i / canvas.width);
