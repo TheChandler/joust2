@@ -21,7 +21,7 @@ export class ParticleEmitter extends Entity {
         let offset = this.timer % 60
         if (true || [0, 10, 20, 30, 40, 50].includes(offset)) {
             // console.log(this.position)
-            for (let i = 0; i < 512; i++) {
+            for (let i = 0; i < 2112; i++) {
 
                 let direction = new Vector2(55 + Math.random() * -30, -25);
                 direction.rotate(Math.random() * (Math.PI / 2) - (Math.PI / 4))

@@ -1,9 +1,6 @@
 import { canvas, ctx } from '../../gameMain';
 import ModuleFactory from './wasm/particle.js';
 
-
-
-
 export class ParticleSystem {
 
     arraySize: number;
@@ -15,6 +12,9 @@ export class ParticleSystem {
     yvel: Int16Array;
     lifetime: Int16Array;
 
+    imageData1: Uint8ClampedArray;
+    imageData2: Int8Array;
+
     nextOpen: number = 0;
 
     private wasmModule: EmscriptenModule & { ccall: any };
@@ -23,6 +23,7 @@ export class ParticleSystem {
     constructor() {
         // The constructor is now empty. Initialization is done in the async initialize method.
         this.initialize();
+        console.log("SIZE : ", canvas.width, canvas.height)
     }
     private initialized: boolean = false;
     async initialize() {
@@ -45,6 +46,9 @@ export class ParticleSystem {
         const lifetime_ptr = this.wasmModule.ccall('get_lifetime', 'number', [], []);
         this.nextOpenPtr = this.wasmModule.ccall('get_next_open', 'number', [], []);
 
+        const imageData1_ptr = this.wasmModule.ccall('get_pixelBuffer', 'number', [], []);
+
+
         // Create TypedArray views that point directly to the wasm memory
         try {
 
@@ -53,6 +57,11 @@ export class ParticleSystem {
             this.xvel = new Int16Array(this.wasmModule.HEAP16.buffer, xvel_ptr, this.arraySize);
             this.yvel = new Int16Array(this.wasmModule.HEAP16.buffer, yvel_ptr, this.arraySize);
             this.lifetime = new Int16Array(this.wasmModule.HEAP16.buffer, lifetime_ptr, this.arraySize);
+            this.imageData1 = new Uint8ClampedArray(this.wasmModule.HEAPU8.buffer, imageData1_ptr, canvas.width * canvas.height * 4);
+
+            // @ts-ignore
+            this.imageData = new ImageData(this.imageData1, canvas.width, canvas.height);
+
         } catch (e) {
             console.error(e)
             console.log(this.wasmModule)
@@ -94,6 +103,7 @@ export class ParticleSystem {
     bmap: ImageBitmap;
     bmap2: ImageBitmap;
 
+    imageData: ImageData;
     draw() {
 
         if (!this.initialized) {
@@ -111,8 +121,6 @@ export class ParticleSystem {
         }
         this.itteration++;
 
-        let imageData = new ImageData(canvas.width, canvas.height);
-        let data = imageData.data
 
         let leftBound = ctx.position.x - (ctx.size.x / 2)
         let rightBound = ctx.position.x + (ctx.size.x / 2)
@@ -122,7 +130,50 @@ export class ParticleSystem {
         let offsetX = leftBound
         let offsetY = upperBound
 
+        this.imageData.data.fill(0);
+
+        // console.log("offsets", offsetX, offsetY) // -400, -225
+
+
         // Draw main particle
+
+        // this.wasmDraw(offsetX, offsetY);
+        this.jsDraw(offsetX, offsetY);
+
+
+        let imageData2 = new ImageData(canvas.width, canvas.height);
+        let data2 = imageData2.data
+        // particle post processing
+        // data2.forEach((p, i) => {
+        //     if (i % 4 == 0 && data2[i + 3] == 0) {
+        //         if (countOpacityInAdjacentPixels(i, data2) > 0) {
+        //             data2[i + 3] = countOpacityInAdjacentPixels(i, data2) / 8
+        //             data2[i] = 255;
+        //         }
+
+        //     }
+        // })
+        createImageBitmap(this.imageData)
+            .then((x) => {
+                this.bmap = x;
+            });
+
+        createImageBitmap(imageData2)
+            .then((x) => {
+                this.bmap2 = x;
+            });
+
+        if (this.bmap) {
+            ctx.drawImage(this.bmap, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
+        }
+        if (this.bmap2) {
+            ctx.drawImage(this.bmap, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
+        }
+    }
+    async wasmDraw(offsetX, offsetY) {
+        this.wasmModule.ccall('draw_update', 'void', ['int', 'int'], [offsetX, offsetY]);
+    }
+    jsDraw(offsetX, offsetY) {
         for (let i = 0; i < this.arraySize; i++) {
             if (this.lifetime[i]) {
                 let y = (this.ypositions[i] >> 4) - offsetY
@@ -132,33 +183,11 @@ export class ParticleSystem {
 
                 let pixel = x + (y * canvas.width)
                 let f = pixel * 4;
-                data[f] = 255;
-                data[f + 1] = 0
-                data[f + 2] = 0
-                data[f + 3] = 255
+                this.imageData1[f] = 255;
+                this.imageData1[f + 1] = 0
+                this.imageData1[f + 2] = 0
+                this.imageData1[f + 3] = 255
             }
-        }
-
-        
-        let imageData2 = new ImageData(canvas.width, canvas.height);
-        let data2 = imageData2.data
-        // particle post processing
-        data.forEach((p, i) => {
-            if (i % 4 == 0 && data[i + 3] == 0) {
-                if (countOpacityInAdjacentPixels(i, data) > 0) {
-                    data2[i + 3] = countOpacityInAdjacentPixels(i, data) / 8
-                    data2[i] = 255;
-                }
-
-            }
-        })
-        createImageBitmap(imageData)
-            .then((x) => {
-                this.bmap = x;
-            });
-
-        if (this.bmap) {
-            ctx.drawImage(this.bmap, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
         }
     }
 }
@@ -200,7 +229,6 @@ function countOpacityInAdjacentPixels(index, data) {
         index - (canvas.width * 4) + 7, // Below + right
     ]
 
-    // console.log("Differences", differences, indexes)
 
     let totalOpacity = 0;
     indexes.forEach(i => {

@@ -462,7 +462,7 @@ function updateMemoryViews() {
   var b = wasmMemory.buffer;
   HEAP8 = new Int8Array(b);
   Module['HEAP16'] = HEAP16 = new Int16Array(b);
-  HEAPU8 = new Uint8Array(b);
+  Module['HEAPU8'] = HEAPU8 = new Uint8Array(b);
   HEAPU16 = new Uint16Array(b);
   HEAP32 = new Int32Array(b);
   HEAPU32 = new Uint32Array(b);
@@ -1363,7 +1363,6 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'HEAPF32',
   'HEAPF64',
   'HEAP8',
-  'HEAPU8',
   'HEAPU16',
   'HEAP32',
   'HEAPU32',
@@ -1591,10 +1590,12 @@ var _get_y_vel = Module['_get_y_vel'] = makeInvalidEarlyAccess('_get_y_vel');
 var _get_lifetime = Module['_get_lifetime'] = makeInvalidEarlyAccess('_get_lifetime');
 var _get_next_open = Module['_get_next_open'] = makeInvalidEarlyAccess('_get_next_open');
 var _get_array_size = Module['_get_array_size'] = makeInvalidEarlyAccess('_get_array_size');
+var _get_pixelBuffer = Module['_get_pixelBuffer'] = makeInvalidEarlyAccess('_get_pixelBuffer');
 var _init = Module['_init'] = makeInvalidEarlyAccess('_init');
 var _testXpositions = Module['_testXpositions'] = makeInvalidEarlyAccess('_testXpositions');
 var _testXpositions2 = Module['_testXpositions2'] = makeInvalidEarlyAccess('_testXpositions2');
 var _update = Module['_update'] = makeInvalidEarlyAccess('_update');
+var _draw_update = Module['_draw_update'] = makeInvalidEarlyAccess('_draw_update');
 var _fflush = makeInvalidEarlyAccess('_fflush');
 var _emscripten_stack_init = makeInvalidEarlyAccess('_emscripten_stack_init');
 var _emscripten_stack_get_free = makeInvalidEarlyAccess('_emscripten_stack_get_free');
@@ -1612,10 +1613,12 @@ function assignWasmExports(wasmExports) {
   Module['_get_lifetime'] = _get_lifetime = createExportWrapper('get_lifetime', 0);
   Module['_get_next_open'] = _get_next_open = createExportWrapper('get_next_open', 0);
   Module['_get_array_size'] = _get_array_size = createExportWrapper('get_array_size', 0);
+  Module['_get_pixelBuffer'] = _get_pixelBuffer = createExportWrapper('get_pixelBuffer', 0);
   Module['_init'] = _init = createExportWrapper('init', 0);
   Module['_testXpositions'] = _testXpositions = createExportWrapper('testXpositions', 0);
   Module['_testXpositions2'] = _testXpositions2 = createExportWrapper('testXpositions2', 0);
   Module['_update'] = _update = createExportWrapper('update', 0);
+  Module['_draw_update'] = _draw_update = createExportWrapper('draw_update', 2);
   _fflush = createExportWrapper('fflush', 1);
   _emscripten_stack_init = wasmExports['emscripten_stack_init'];
   _emscripten_stack_get_free = wasmExports['emscripten_stack_get_free'];
