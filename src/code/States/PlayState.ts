@@ -11,6 +11,11 @@ export default class PlayState implements State {
     entitySystem: EntitySystem = new EntitySystem([]);
     particleSystem = new ParticleSystem();
 
+    dependencies = {
+        entitySystem: this.entitySystem,
+        particleSystem: this.particleSystem,
+    }
+
     constructor(dependencies: any) {
         this.loadLevelData();
 
@@ -57,7 +62,7 @@ export default class PlayState implements State {
                     image: null,
                     particleSystem: this.particleSystem,
                     entitySystem: this.entitySystem,
-
+                    ...this.dependencies
                 }
 
                 if (classType.hasPosition) {

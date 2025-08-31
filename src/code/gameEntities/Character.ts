@@ -3,6 +3,7 @@ import { Entity } from "./Entity.js";
 import { inputHandler, shapeFactory } from "../gameMain.js";
 import { COLLISION_TYPE } from "../Constants/CollisionTypes.js";
 import { Platform } from "./Platform.js";
+import { ParticleSystem } from "../Systems/PlayState/ParticleSystem.js";
 
 interface Input {
     left: boolean;
@@ -42,7 +43,11 @@ export class Character extends Entity {
     timer: number = 0;
 
 
-    constructor({ position, velocity, id }) {
+    //dependencies
+    particleSystem: ParticleSystem;
+
+
+    constructor({ position, velocity, id, particleSystem }) {
         super();
         this.name = "Character";
         this.position = position;
@@ -56,6 +61,7 @@ export class Character extends Entity {
         }
         this.state = makeGroundedState(this);
         this.create();
+        this.particleSystem = particleSystem;
     }
 
     public update() {
@@ -76,6 +82,7 @@ export class Character extends Entity {
 
     public draw() {
         this.sprite.draw();
+        shapeFactory.createVector2(this.position.x, this.position.y + 40).draw('#ff0000');
     }
 
     public collide(entity: Entity): void {
@@ -111,8 +118,10 @@ function makeAirState(character: Character): CharacterState {
         },
         collide: (entity: Entity) => {
             if (entity instanceof Platform) {
+
+                character.particleSystem?.spawnLandingParticles(character.position.x+ 20, character.position.y + 40, 50); // 40 = character height and width. 20 = half
                 character.velocity.y = 0;
-                character.position.y = entity.position.y - entity.size.y;
+                character.position.y = entity.position.y - 40; // 40 hardcoded height of character
                 character.state = makeGroundedState(character);
             }
         },

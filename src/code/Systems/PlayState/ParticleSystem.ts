@@ -137,8 +137,8 @@ export class ParticleSystem {
 
         // Draw main particle
 
-        // this.wasmDraw(offsetX, offsetY);
-        this.jsDraw(offsetX, offsetY);
+        this.wasmDraw(offsetX, offsetY);
+        // this.jsDraw(offsetX, offsetY);
 
 
         let imageData2 = new ImageData(canvas.width, canvas.height);
@@ -153,25 +153,31 @@ export class ParticleSystem {
 
         //     }
         // })
-        createImageBitmap(this.imageData)
-            .then((x) => {
-                this.bmap = x;
-            });
-
-        createImageBitmap(imageData2)
-            .then((x) => {
-                this.bmap2 = x;
-            });
-
-        if (this.bmap) {
-            ctx.drawImage(this.bmap, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
+        if (this.itteration % 2 == 0) {
+            createImageBitmap(this.imageData)
+                .then((x) => {
+                    this.bmap = x;
+                    // ctx.drawImage(this.bmap, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
+                });
         }
-        if (this.bmap2) {
-            ctx.drawImage(this.bmap, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
-        }
+
+        ctx.drawImage(this.bmap, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
+
+        // createImageBitmap(imageData2)
+        //     .then((x) => {
+        //         this.bmap2 = x;
+        //     });
+
+        // if (this.bmap) {
+        //     ctx.drawImage(this.bmap, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
+        // }
+        // if (this.bmap2) {
+        //     ctx.drawImage(this.bmap, ctx.position.x - ctx.size.x / 2, ctx.position.y - ctx.size.y / 2);
+        // }
     }
     async wasmDraw(offsetX, offsetY) {
-        this.wasmModule.ccall('draw_update', 'void', ['int', 'int'], [offsetX, offsetY]);
+        await this.wasmModule.ccall('draw_update', 'void', ['int', 'int'], [offsetX, offsetY]);
+
     }
     jsDraw(offsetX, offsetY) {
         for (let i = 0; i < this.arraySize; i++) {
@@ -188,6 +194,17 @@ export class ParticleSystem {
                 this.imageData1[f + 2] = 0
                 this.imageData1[f + 3] = 255
             }
+        }
+    }
+
+    /**
+     * @param x x location of particle origin
+     * @param y y location of particle origin
+     * @param intensity 0-100. How high the particles go
+     */
+    spawnLandingParticles(x, y, intensity) {
+        for (let i = 0; i < intensity; i++) {
+            this.add(x, y, Math.random() * 40 - 20, intensity * (Math.random() * -5 - 40) * .025, 100)
         }
     }
 }

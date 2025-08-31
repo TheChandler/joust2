@@ -84,7 +84,7 @@ extern "C"
             {
                 xpositions[i] += xvel[i];
                 ypositions[i] += yvel[i];
-                yvel[i] += 2; // 0x0002
+                yvel[i] += 8; // 0x0002
                 lifetime[i]--;
             }
         }
@@ -93,33 +93,6 @@ extern "C"
     int cordsToIndex(int x, int y)
     {
         return (x + (y * CANVAS_WIDTH)) * 4;
-    }
-    int countOpacityInAdjacentPixels(index, data)
-    {
-
-        // left and right seem swapped for some reason
-
-        int[] indexes = [
-            index + (CANVAS_WIDTH * 4) + 3, // Above
-            // // index  + 3, // Me?
-            index - (CANVAS_WIDTH * 4) + 3,  // Below
-            index + (CANVAS_WIDTH * 4) - 1,  // Above + left
-            index + -1,                      // Me + left
-            index - (CANVAS_WIDTH * 4) + -1, // Below + left
-            index + (CANVAS_WIDTH * 4) + 7,  // Above + right
-            index + 7,                       // Me + right
-            index - (CANVAS_WIDTH * 4) + 7,  // Below + right
-        ]
-
-            int totalOpacity = 0;
-        for (int i = 0; i < indexes.length; i++)
-        {
-            if (data[indexes[i]] == 255)
-            {
-                totalOpacity += data[i]
-            }
-        }
-        return totalOpacity / 8
     }
 
     EXPORT void draw_update(int offsetX, int offsetY)
@@ -150,31 +123,30 @@ extern "C"
             }
         }
 
-        for (int x = 0; x < CANVAS_WIDTH; x++)
-        {
-            for (int y = 0; y < CANVAS_HEIGHT; y++)
-            {
-                int op
+        // for (int x = 0; x < CANVAS_WIDTH; x++)
+        // {
+        //     for (int y = 0; y < CANVAS_HEIGHT; y++)
+        //     {
 
-                if (x < 20 || x > 780 || y < 20 || y > 430)
-                {
+        //         if (x < 20 || x > 780 || y < 20 || y > 430)
+        //         {
 
-                    int i = cordsToIndex(x, y);
-                    pixelBuffer[i] = 0;
-                    pixelBuffer[i + 1] = 0;
-                    pixelBuffer[i + 2] = 0;
-                    pixelBuffer[i + 3] = 255;
-                }
-                else
-                {
-                    // Sanity check
-                    // int i = cordsToIndex(x, y);
-                    // pixelBuffer[i] = 255 * ( x/ (double)CANVAS_WIDTH);
-                    // pixelBuffer[i + 1] = 255 * ( y/ (double)CANVAS_HEIGHT);
-                    // pixelBuffer[i + 2] = 0;
-                    // pixelBuffer[i + 3] = 255;
-                }
-            }
-        }
+        //             int i = cordsToIndex(x, y);
+        //             pixelBuffer[i] = 0;
+        //             pixelBuffer[i + 1] = 0;
+        //             pixelBuffer[i + 2] = 0;
+        //             pixelBuffer[i + 3] = 255;
+        //         }
+        //         else
+        //         {
+        //             // Sanity check
+        //             // int i = cordsToIndex(x, y);
+        //             // pixelBuffer[i] = 255 * ( x/ (double)CANVAS_WIDTH);
+        //             // pixelBuffer[i + 1] = 255 * ( y/ (double)CANVAS_HEIGHT);
+        //             // pixelBuffer[i + 2] = 0;
+        //             // pixelBuffer[i + 3] = 255;
+        //         }
+        //     }
+        // }
     }
 }
